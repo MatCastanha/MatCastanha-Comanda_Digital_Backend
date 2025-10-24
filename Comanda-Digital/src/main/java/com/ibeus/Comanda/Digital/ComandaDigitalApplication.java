@@ -10,5 +10,5 @@ public class ComandaDigitalApplication {
 		SpringApplication.run(ComandaDigitalApplication.class, args);
 	}
 
-}
+}  
  

@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface DishRepository extends JpaRepository<Dish, Long> {
 
-    List<Dish> findByNameStartingWithIgnoreCase(String name);
+    List<Dish> findByNameContainingIgnoreCase(String name);
 
 }

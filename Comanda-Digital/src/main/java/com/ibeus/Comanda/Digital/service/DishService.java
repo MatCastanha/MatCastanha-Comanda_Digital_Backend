@@ -23,7 +23,7 @@ public class DishService {
     }
 
     public List<Dish> findByName(String name){
-        List<Dish> dishes = dishRepository.findByNameStartingWithIgnoreCase(name);
+        List<Dish> dishes = dishRepository.findByNameContainingIgnoreCase(name);
 
         if(dishes.isEmpty()){
             throw new RuntimeException("No dishes found starting with: " + name);

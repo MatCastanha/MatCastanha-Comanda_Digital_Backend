@@ -14,6 +14,12 @@ public class Dish {
 
     private String name;
 
+    private String category;
+
+    private Double rating;
+
+    private Double estimateTime;
+
     private String description;
 
     private Double price;
