@@ -1,10 +1,11 @@
 package com.ibeus.Comanda.Digital.service;
 
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import com.ibeus.Comanda.Digital.model.Dish;
 import com.ibeus.Comanda.Digital.repository.DishRepository;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -19,24 +20,27 @@ public class DishService {
     }
 
     public Dish findById(Long id) {
-        return dishRepository.findById(id).orElseThrow(() -> new RuntimeException("Dish not found"));
+        return dishRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Dish not found with id: " + id));
     }
 
-    public List<Dish> findByName(String name){
+    public List<Dish> findByName(String name) {
         List<Dish> dishes = dishRepository.findByNameContainingIgnoreCase(name);
 
-        if(dishes.isEmpty()){
-            throw new RuntimeException("No dishes found starting with: " + name);
+        if (dishes.isEmpty()) {
+            throw new RuntimeException("No dishes found for name: " + name);
         }
 
         return dishes;
     }
 
-    public List<Dish> findByCategory(String category){
+    public List<Dish> findByCategory(String category) {
         List<Dish> dishes = dishRepository.findByCategoryIgnoreCase(category);
 
-        if(dishes.isEmpty()){
-            throw new RuntimeException("No dishes in the \"" + category + "\" category were found");
+        if (dishes.isEmpty()) {
+            // Lança 404 NOT FOUND se a lista estiver vazia
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "No dishes found in category: " + category);
         }
 
         return dishes;
@@ -48,11 +52,13 @@ public class DishService {
 
     public Dish update(Long id, Dish dishDetails) {
         Dish dish = findById(id);
+
         dish.setUrlImage(dishDetails.getUrlImage());
         dish.setName(dishDetails.getName());
         dish.setCategory(dishDetails.getCategory());
         dish.setDescription(dishDetails.getDescription());
         dish.setPrice(dishDetails.getPrice());
+
         return dishRepository.save(dish);
     }
 

@@ -9,7 +9,6 @@ import lombok.Data;
 public class Client {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cpf;
 
     private String name;
@@ -21,6 +20,4 @@ public class Client {
     private Address address;
 
     private int addressNumber;
-
-    private String payment;
 }

@@ -1,9 +1,10 @@
 package com.ibeus.Comanda.Digital.controller;
 
-
+import com.ibeus.Comanda.Digital.dto.AddressDTO;
 import com.ibeus.Comanda.Digital.model.Address;
 import com.ibeus.Comanda.Digital.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,19 +16,24 @@ public class AddressController {
     private AddressService addressService;
 
     @GetMapping
-    public Address getAddress(){
-        return addressService.getAddress();
+    public ResponseEntity<AddressDTO> getAddress() {
+        Address address = addressService.getAddress();
+        if (address == null) return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(AddressDTO.fromModel(address));
     }
 
-    // Endpoint GET: apenas consulta o CEP (sem salvar)
+    // Busca CEP na API externa e retorna DTO
     @GetMapping("/{cep}")
-    public Address getAddressByCep(@PathVariable String cep) {
-        return addressService.buscarPorCep(cep);
+    public ResponseEntity<AddressDTO> getAddressByCep(@PathVariable String cep) {
+        Address address = addressService.buscarPorCep(cep);
+        return ResponseEntity.ok(AddressDTO.fromModel(address));
     }
 
-    // Endpoint POST: busca o CEP e salva/atualiza no banco automaticamente
+    // Salva e retorna DTO
     @PostMapping("/{cep}")
-    public Address saveOrUpdateByCep(@PathVariable String cep) {
-        return addressService.salvarOuAtualizarPorCep(cep);
+    public ResponseEntity<AddressDTO> saveOrUpdateByCep(@PathVariable String cep) {
+        Address address = addressService.salvarOuAtualizarPorCep(cep);
+        return ResponseEntity.ok(AddressDTO.fromModel(address));
     }
 }

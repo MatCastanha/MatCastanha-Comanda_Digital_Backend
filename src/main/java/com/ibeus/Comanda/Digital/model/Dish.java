@@ -12,7 +12,7 @@ public class Dish {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String UrlImage;
+    private String urlImage;
 
     private String name;
 

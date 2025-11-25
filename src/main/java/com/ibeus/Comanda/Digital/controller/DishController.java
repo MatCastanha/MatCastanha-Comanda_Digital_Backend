@@ -1,7 +1,6 @@
 package com.ibeus.Comanda.Digital.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.ibeus.Comanda.Digital.model.Dish;
 import com.ibeus.Comanda.Digital.service.DishService;
@@ -27,12 +26,12 @@ public class DishController {
     }
 
     @GetMapping("/search")
-    public List<Dish> getDishByName(@RequestParam("name") String name){
+    public List<Dish> getDishByName(@RequestParam("name") String name) {
         return dishService.findByName(name);
     }
 
-    @GetMapping("/{category}")
-    public List<Dish> getDishByCategory(@RequestParam("category") String category){
+    @GetMapping("/category/{category}")
+    public List<Dish> getDishByCategory(@PathVariable String category) {
         return dishService.findByCategory(category);
     }
 
@@ -47,8 +46,7 @@ public class DishController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDish(@PathVariable Long id) {
+    public void deleteDish(@PathVariable Long id) {
         dishService.delete(id);
-        return ResponseEntity.noContent().build();
     }
 }
