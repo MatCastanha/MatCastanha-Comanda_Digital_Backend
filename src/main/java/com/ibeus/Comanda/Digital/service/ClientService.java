@@ -33,9 +33,11 @@ public class ClientService {
         if (existingClientOpt.isPresent()) {
             clientToSave = existingClientOpt.get();
             // Atualiza dados básicos
+            clientToSave.setCpf(clientData.getCpf());
             clientToSave.setName(clientData.getName());
             clientToSave.setMidName(clientData.getMidName());
             clientToSave.setAddressNumber(clientData.getAddressNumber());
+            clientToSave.setComplement(clientData.getComplement());
         } else {
             clientToSave = clientData;
         }

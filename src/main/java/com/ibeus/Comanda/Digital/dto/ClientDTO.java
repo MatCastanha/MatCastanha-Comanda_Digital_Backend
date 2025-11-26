@@ -8,13 +8,13 @@ import com.ibeus.Comanda.Digital.model.Address;
 @Data
 public class ClientDTO {
 
+    private Long id;
     private Long cpf; // Note: Na prática, CPF não deveria ser gerado, mas é o seu @Id atual
     private String name;
     private String midName;
     private AddressDTO address; // O Address também deve ser DTO neste nível
     private int addressNumber;
-    // O campo 'payment' não estava no seu DTO original, mas se quiser expor, adicione aqui.
-    // private String payment;
+    private String complement;
 
     /**
      * 🟢 CORREÇÃO: Converte a Entity 'Client' para o DTO 'ClientDTO' (USADO NO GET e POST de retorno)
@@ -26,10 +26,12 @@ public class ClientDTO {
         }
 
         ClientDTO dto = new ClientDTO();
+        dto.setId(client.getId());
         dto.setCpf(client.getCpf());
         dto.setName(client.getName());
         dto.setMidName(client.getMidName());
         dto.setAddressNumber(client.getAddressNumber());
+        dto.setComplement(client.getComplement());
 
         // Converte a Entity Address para o DTO AddressDTO
         // Note que o AddressDTO também precisa ter o seu próprio método fromModel(Address)
@@ -51,15 +53,16 @@ public class ClientDTO {
         Client client = new Client();
 
         // Se o CPF vier no DTO, ele será usado para identificar (se não for gerado)
+        client.setId(this.id);
         client.setCpf(this.cpf);
         client.setName(this.name);
         client.setMidName(this.midName);
         client.setAddressNumber(this.addressNumber);
+        client.setComplement(this.getComplement());
 
         // Converte o DTO Address para a Entity Address
         client.setAddress(this.address == null ? null : this.address.toModel());
 
-        // client.setPayment(this.payment); // Se 'payment' estiver no DTO
 
         return client;
     }

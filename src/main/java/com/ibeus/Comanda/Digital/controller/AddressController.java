@@ -26,14 +26,14 @@ public class AddressController {
     // Busca CEP na API externa e retorna DTO
     @GetMapping("/{cep}")
     public ResponseEntity<AddressDTO> getAddressByCep(@PathVariable String cep) {
-        Address address = addressService.buscarPorCep(cep);
+        Address address = addressService.findByCep(cep);
         return ResponseEntity.ok(AddressDTO.fromModel(address));
     }
 
     // Salva e retorna DTO
     @PostMapping("/{cep}")
     public ResponseEntity<AddressDTO> saveOrUpdateByCep(@PathVariable String cep) {
-        Address address = addressService.salvarOuAtualizarPorCep(cep);
+        Address address = addressService.saveOrupdateByCep(cep);
         return ResponseEntity.ok(AddressDTO.fromModel(address));
     }
 }

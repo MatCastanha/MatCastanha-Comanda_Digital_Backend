@@ -18,7 +18,7 @@ public class AddressService {
     @Autowired
     private AddressRepository addressRepository;
 
-    public Address buscarPorCep(String cep) {
+    public Address findByCep(String cep) {
         RestTemplate restTemplate = new RestTemplate();
         Map<String, Object> response = restTemplate.getForObject(VIA_CEP_URL, Map.class, cep);
 
@@ -36,7 +36,7 @@ public class AddressService {
     }
 
     //  Salva ou atualiza o endereço (só existe um)
-    public Address salvarOuAtualizarPorCep(String cep) {
+    public Address saveOrupdateByCep(String cep) {
         Address novoEndereco = buscarPorCep(cep);
 
         Optional<Address> existente = addressRepository.findAll().stream().findFirst();

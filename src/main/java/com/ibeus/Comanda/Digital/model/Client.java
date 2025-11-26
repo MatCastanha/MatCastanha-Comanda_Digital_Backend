@@ -1,6 +1,8 @@
 package com.ibeus.Comanda.Digital.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Entity
@@ -9,10 +11,11 @@ import lombok.Data;
 public class Client {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private Long cpf;
-
     private String name;
-
     private String midName;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -20,4 +23,5 @@ public class Client {
     private Address address;
 
     private int addressNumber;
+    private String complement;
 }
