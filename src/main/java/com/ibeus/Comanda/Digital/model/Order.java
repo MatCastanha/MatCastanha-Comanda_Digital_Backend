@@ -33,7 +33,11 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
 
-    // --- Métodos Customizados (O Lombok não faz isso por você) ---
+    // Captura o nome do cliente no momento da finalização
+    private String clientSnapshotName;
+
+    // Captura o endereço completo (Rua, Número, Bairro, CEP) no momento da finalização
+    private String addressSnapshot;
 
     public Double getTotal() {
         double sum = 0.0;

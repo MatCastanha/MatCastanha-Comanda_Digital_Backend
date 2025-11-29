@@ -15,7 +15,7 @@ public class OrderDTO {
     private Instant moment;
     private OrderStatus status;
 
-    private ClientDTO client;
+    private ClientDTO client; // Inclui o DTO do Cliente (com Endereço)
 
     private List<OrderItemDTO> items = new ArrayList<>();
 
@@ -28,7 +28,7 @@ public class OrderDTO {
         this.moment = entity.getMoment();
         this.status = entity.getStatus();
 
-        // Conversão correta do Client
+        // Conversão do Client usando o método estático fromModel
         if (entity.getClient() != null) {
             this.client = ClientDTO.fromModel(entity.getClient());
         }
@@ -38,9 +38,6 @@ public class OrderDTO {
                 items.add(new OrderItemDTO(item))
         );
 
-        // Total do pedido
         this.total = entity.getTotal();
     }
-
-    // getters e setters (pode ser com Lombok @Data também)
 }

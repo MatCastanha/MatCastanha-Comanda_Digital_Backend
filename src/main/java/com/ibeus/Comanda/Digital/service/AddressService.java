@@ -37,7 +37,7 @@ public class AddressService {
 
     //  Salva ou atualiza o endereço (só existe um)
     public Address saveOrupdateByCep(String cep) {
-        Address novoEndereco = buscarPorCep(cep);
+        Address novoEndereco = findByCep(cep);
 
         Optional<Address> existente = addressRepository.findAll().stream().findFirst();
 

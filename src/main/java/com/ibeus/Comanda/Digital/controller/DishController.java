@@ -1,5 +1,6 @@
 package com.ibeus.Comanda.Digital.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibeus.Comanda.Digital.dto.DishDTO;
 import com.ibeus.Comanda.Digital.model.Dish;
 import com.ibeus.Comanda.Digital.service.DishService;
@@ -11,19 +12,19 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestController
-@RequestMapping("/dishes")
-@CrossOrigin(origins = "http://localhost:4200")
+@RestController // Indica que esta classe responde a requisições REST (JSON)
+@RequestMapping("/dishes") // Prefixo da URL: localhost:8080/dishes
+@CrossOrigin(origins = "http://localhost:4200") // Permite acesso do Angular
 public class DishController {
 
     @Autowired
     private DishService dishService;
 
-    // MÉTODOS GET
-    // (Mapeamentos de busca foram atualizados para retornar DTOs)
+    // --- MÉTODOS DE LEITURA (GET) ---
 
     @GetMapping
     public ResponseEntity<List<DishDTO>> getAllDishes() {
+        // Busca Entities, converte para DTOs e retorna lista
         List<DishDTO> list = dishService.findAll().stream()
                 .map(DishDTO::fromModel)
                 .collect(Collectors.toList());
@@ -51,17 +52,23 @@ public class DishController {
         return ResponseEntity.ok(list);
     }
 
-    // --- Endpoint ÚNICO para Criação (Upload ou URL) ---
+    // --- MÉTODO DE CRIAÇÃO UNIFICADO (POST) ---
+
+    // consumes = "multipart/form-data" permite envio de arquivos + texto
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<DishDTO> createDish(
-            // Usa @ModelAttribute para mapear campos de texto diretamente no DTO
+            // 1. Revertido: Recebe os campos do formulário (name, price, etc.) e tenta mapear diretamente
             @ModelAttribute DishDTO dishDTO,
-            // Recebe o arquivo, se existir (opcional)
+
+            // 2. Recebe o arquivo
             @RequestParam(value = "file", required = false) MultipartFile file
     ) {
+        // A Lógica do Service continua a mesma (chama createUnified)
         Dish savedDish = dishService.create(dishDTO, file);
         return ResponseEntity.ok(DishDTO.fromModel(savedDish));
     }
+
+    // --- MÉTODOS DE ATUALIZAÇÃO E DELEÇÃO ---
 
     @PutMapping("/{id}")
     public ResponseEntity<DishDTO> updateDish(@PathVariable Long id, @RequestBody DishDTO dishDTO) {
@@ -72,6 +79,7 @@ public class DishController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDish(@PathVariable Long id) {
         dishService.delete(id);
+        // Retorna 204 No Content (sucesso sem corpo)
         return ResponseEntity.noContent().build();
     }
 }

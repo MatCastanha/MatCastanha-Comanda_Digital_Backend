@@ -1,9 +1,13 @@
 package com.ibeus.Comanda.Digital.dto;
 
 import com.ibeus.Comanda.Digital.model.Dish;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Data
+@Data // Gera Getters e Setters
+@NoArgsConstructor // ⚠️ IMPORTANTE: Cria um construtor vazio. Essencial para o Spring converter JSON/Form-data neste objeto sem dar erro.
+@AllArgsConstructor // Cria um construtor com todos os argumentos (útil para testes)
 public class DishDTO {
 
     private Long id;
@@ -13,9 +17,8 @@ public class DishDTO {
     private String description;
     private Double price;
 
-    // Converte Entity -> DTO
     public static DishDTO fromModel(Dish dish) {
-        if (dish == null) return null;
+        if (dish == null) return null; // Segurança contra NullPointerException
         DishDTO dto = new DishDTO();
         dto.setId(dish.getId());
         dto.setUrlImage(dish.getUrlImage());
@@ -26,7 +29,6 @@ public class DishDTO {
         return dto;
     }
 
-    // Converte DTO -> Entity
     public Dish toModel() {
         Dish dish = new Dish();
         dish.setId(this.id);

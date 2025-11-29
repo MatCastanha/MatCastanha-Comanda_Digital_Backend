@@ -18,7 +18,9 @@ public class DishService {
     private DishRepository dishRepository;
 
     @Autowired
-    private StorageService storageService; // Injeção do novo serviço
+    private StorageService storageService; // Injeta o serviço que sabe salvar arquivos
+
+    // --- Buscas ---
 
     public List<Dish> findAll() {
         return dishRepository.findAll();
@@ -26,6 +28,7 @@ public class DishService {
 
     public Dish findById(Long id) {
         return dishRepository.findById(id)
+                // Se não achar, lança erro 404 (Not Found) em vez de erro genérico
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Prato não encontrado: " + id));
     }
 
@@ -36,29 +39,37 @@ public class DishService {
     public List<Dish> findByCategory(String category) {
         List<Dish> dishes = dishRepository.findByCategoryIgnoreCase(category);
         if (dishes.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum prato na categoria: " + category);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum prato nesta categoria: " + category);
         }
         return dishes;
     }
 
-    // --- Lógica de Criação Unificada (Sem ObjectMapper) ---
+    // --- Criação Unificada (Lógica Principal) ---
+
     public Dish create(DishDTO dishDTO, MultipartFile file) {
         try {
-            // Se veio arquivo, salva e atualiza a URL
+            // 1. Verifica se o usuário enviou uma imagem
             if (file != null && !file.isEmpty()) {
+                // Se enviou, chama o StorageService para salvar no disco
                 String imageUrl = storageService.store(file);
+                // Atualiza o DTO com o caminho da nova imagem
                 dishDTO.setUrlImage(imageUrl);
             }
+            // Se file for null, ele mantém a URL que talvez já tenha vindo no DTO (ou fica null)
 
-            // Converte e Salva no banco
+            // 2. Converte DTO -> Entity e salva no banco
             return dishRepository.save(dishDTO.toModel());
+
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro ao salvar prato", e);
+            // Captura erros e devolve um 400 Bad Request
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro ao processar dados do prato", e);
         }
     }
 
+    // --- Atualização ---
+
     public Dish update(Long id, DishDTO dishDTO) {
-        Dish existingDish = findById(id);
+        Dish existingDish = findById(id); // Garante que existe antes de atualizar
 
         // Atualiza campos
         existingDish.setName(dishDTO.getName());
@@ -66,13 +77,15 @@ public class DishService {
         existingDish.setCategory(dishDTO.getCategory());
         existingDish.setDescription(dishDTO.getDescription());
 
-        // Permite atualizar a URL manualmente ou por upload (neste caso, por DTO)
+        // Só atualiza a imagem se uma nova URL for passada (útil para updates sem upload)
         if (dishDTO.getUrlImage() != null) {
             existingDish.setUrlImage(dishDTO.getUrlImage());
         }
 
         return dishRepository.save(existingDish);
     }
+
+    // --- Deleção ---
 
     public void delete(Long id) {
         if (!dishRepository.existsById(id)) {
